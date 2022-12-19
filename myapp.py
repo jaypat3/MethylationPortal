@@ -41,7 +41,7 @@ def load_data(dataset):
     data = pd.read_csv(dataset)
     return data
 
-@st.cache
+@st.cache(suppress_st_warning=True)
 def load_gene_data(dataset):
     gene_data = dataset.loc[dataset['Gene'] == text_input]
     st.write(gene_data)
