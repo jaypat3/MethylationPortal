@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 st.title('Methylation Portal')
 #hi
-BRCA = './TCGADatasets/BRCA/GeneTableBRCAPVals.csv'
+BRCA = './TCGADatasets/BLCA/GeneTableBLCAPVals.csv'
 
 @st.cache
 def load_data():
