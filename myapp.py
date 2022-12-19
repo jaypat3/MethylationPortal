@@ -43,7 +43,8 @@ def load_data(dataset):
 
 def load_gene_data(dataset):
     gene_data = dataset.loc[dataset['Gene'] == text_input]
-    st.write(gene_data)
+    if not gene_data.empty:
+        st.write(gene_data)
     return gene_data
 
 # Create a text element and let the reader know the data is loading.
