@@ -33,7 +33,7 @@ THYMdata = './TCGADatasets/THYM/GeneTableTHYMPVals.csv'
 UCECdata = './TCGADatasets/UCEC/GeneTableUCECPVals.csv'
 
 all_data = [BLCAdata,BRCAdata,CESCdata,COADdata,ESCAdata,GBMdata,HNSCdata,KIRCdata,KIRPdata,LGGdata,LIHCdata,LUADdata,LUSCdata,OVdata,PAADdata,PCPGdata,PRADdata,READdata,SARCdata,SKCMdata,STADdata,TGCTdata,THCAdata,THYMdata,UCECdata]
-BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC = None
+BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 all_datasets = [BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC]
 
 @st.cache
