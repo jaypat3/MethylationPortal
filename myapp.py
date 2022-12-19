@@ -60,7 +60,7 @@ if text_input:
     st.write("You entered: ", text_input)
 
 st.subheader('Raw data')
-st.write(BLCAdata)
+st.write(all_data[1])
 
 BLCA_gene_data = load_gene_data(BLCAdata)
 st.write(BLCA_gene_data)
