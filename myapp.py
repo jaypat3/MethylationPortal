@@ -44,6 +44,7 @@ def load_data(dataset):
 @st.cache
 def load_gene_data(dataset):
     gene_data = dataset.loc[dataset['Gene'] == text_input]
+    st.write(gene_data)
     return gene_data
 
 # Create a text element and let the reader know the data is loading.
@@ -62,9 +63,9 @@ if text_input:
 st.subheader('Raw data')
 st.write(all_data[0])
 
-BLCA_gene_data = load_gene_data(all_data[0])
-st.write(BLCA_gene_data)
+for data in all_data:
+    load_gene_data(data)
 
 fig,ax = plt.subplots()
-ax.hist = plt.hist(BLCA_gene_data[['MedianBvalTumor']],bins = np.arange(0,1.2,0.2))
+# ax.hist = plt.hist(BLCA_gene_data[['MedianBvalTumor']],bins = np.arange(0,1.2,0.2))
 st.pyplot(fig)
