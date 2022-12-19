@@ -60,9 +60,9 @@ if text_input:
     st.write("You entered: ", text_input)
 
 st.subheader('Raw data')
-st.write(all_data[1])
+st.write(all_data[0])
 
-BLCA_gene_data = load_gene_data(BLCAdata)
+BLCA_gene_data = load_gene_data(all_data[0])
 st.write(BLCA_gene_data)
 
 fig,ax = plt.subplots()
