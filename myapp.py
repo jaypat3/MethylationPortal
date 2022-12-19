@@ -27,12 +27,12 @@ READ = './TCGADatasets/READ/GeneTableREADPVals.csv'
 SARC = './TCGADatasets/SARC/GeneTableSARCPVals.csv'
 SKCM = './TCGADatasets/SKCM/GeneTableSKCMPVals.csv'
 STAD = './TCGADatasets/STAD/GeneTableSTADPVals.csv'
-TCGT = './TCGADatasets/TCGT/GeneTableTCGTPVals.csv'
+TGCT = './TCGADatasets/TGCT/GeneTableTGCTPVals.csv'
 THCA = './TCGADatasets/THCA/GeneTableTHCAPVals.csv'
 THYM = './TCGADatasets/THYM/GeneTableTHYMPVals.csv'
 UCEC = './TCGADatasets/UCEC/GeneTableUCECPVals.csv'
 
-all_datasets = [BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TCGT,THCA,THYM,UCEC]
+all_datasets = [BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC]
 
 @st.cache
 def load_data(dataset):
