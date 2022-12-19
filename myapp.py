@@ -41,10 +41,10 @@ def load_data(dataset):
     data = pd.read_csv(dataset)
     return data
 
-@st.cache(suppress_st_warning=True)
+@st.cache
 def load_gene_data(dataset):
     gene_data = dataset.loc[dataset['Gene'] == text_input]
-    st.write(gene_data)
+    st.write(gene_data)(suppress_st_warning=True)
     return gene_data
 
 # Create a text element and let the reader know the data is loading.
