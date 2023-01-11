@@ -23,5 +23,9 @@ st.write("Enter a dataset and a list of space separated genes (will change this 
 st.write("We will return a frequency table of each category and how many genes of the list appear in each category.")
 
 st.subheader("Categories:")
-st.write("We test associations between 2 groups; the group breakdown is as follows:\nGT/GB: High Gene Expression/Low Gene Expression\nMT/MB: Hypermethylation/Hypomethylation\nCG/CD: Copy Number Gain/Copy Number Deletion\nMut: Mutation")
+st.write("We test associations between 2 groups; the group breakdown is as follows:")
+st.write("GT/GB: High Gene Expression/Low Gene Expression")
+st.write("MT/MB: Hypermethylation/Hypomethylation")
+st.write("CG/CD: Copy Number Gain/Copy Number Deletion")
+st.write("Mut: Mutation")
 
