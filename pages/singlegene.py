@@ -6,7 +6,7 @@ from scipy import stats
 from math import log
 
 
-st.title('Methylation Portal')
+st.title('Single Gene')
 
 BLCAdata = './TCGADatasets/BLCA/GeneTableBLCAPVals.csv'
 BRCAdata = './TCGADatasets/BRCA/GeneTableBRCAPVals.csv'
@@ -59,15 +59,15 @@ def get_significant_probe_counts(dataset):
     cols = ["GTMT","GTMB","GBMT","GBMB","GTCG","GTCD","GBCG","GBCD","GTMut","GBMut"]
     to_add = [0]*(len(cols)+1)
     for i,col in enumerate(cols):
-        tempdf = dataset[dataset[col] < 0.05]
+        tempdf = dataset[dataset[col] <= 0.05]
         if col == "GTMT":
-            tempdf = tempdf[tempdf["GTMTnSig"] >= 0.05]
+            tempdf = tempdf[tempdf["GTMTnSig"] > 0.05]
         if col == "GTMB":
-            tempdf = tempdf[tempdf["GTMBnSig"] >= 0.05]
+            tempdf = tempdf[tempdf["GTMBnSig"] > 0.05]
         if col == "GBMT":
-            tempdf = tempdf[tempdf["GBMTnSig"] >= 0.05]
+            tempdf = tempdf[tempdf["GBMTnSig"] > 0.05]
         if col == "GBMB":
-            tempdf = tempdf[tempdf["GBMBnSig"] >= 0.05]    
+            tempdf = tempdf[tempdf["GBMBnSig"] > 0.05]    
         to_add[i+1] = tempdf.shape[0]
 
     if not all(v == 0 for v in to_add):
@@ -145,10 +145,23 @@ for data in gene_data_array:
         to_add = pd.DataFrame(to_add).T
         L.append(to_add)
 
-if text_input:
+if L:
     df = pd.concat(L,ignore_index = True) 
     df.columns = ['Dataset','GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
     df = df.set_index('Dataset')
+
+
+if not df.empty:
+    st.subheader("Section 1: Visualizing significant Probes")
+    df.plot(kind='bar',stacked=True,title='Significant Probes by Dataset')
+    plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    plt.show()
+    st.pyplot(plt)
+    st.write("Note: there is (almost always) overlap between the classification groups GTMT,GTMB,etc.")
+    st.write("This is because a probe's significant expression may influence or be influenced by anothers, or they may be entirely independent but both present.")
+    st.write("Not just that, but the same probe may even show up as significant across multiple tumor types.")
+    st.write("\n\n")
+
 
 # if not df.empty:
     # st.write(df)
@@ -175,18 +188,9 @@ for label in labels:
 # df2 = df.copy().T
 
 if not df.empty:
-    st.subheader("Section 1: Visualizing significant Probes")
-    df.plot(kind='bar',stacked=True,title='Significant Probes by Dataset')
-    plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-    plt.show()
-    st.pyplot(plt)
-    st.write("Note: there is (almost always) overlap between the classification groups GTMT,GTMB,etc.")
-    st.write("This is because a probe's significant expression may influence or be influenced by anothers, or they may be entirely independent but both present.")
-    st.write("Not just that, but the same probe may even show up as significant across multiple tumor types.")
-    st.write("\n\n")
 
     plt.figure()
-    plt.barh(labels,L)
+    plt.bar(labels,L)
     plt.title('Significant Probes by Characteristic (unique)')
     plt.show()
     st.pyplot(plt)
