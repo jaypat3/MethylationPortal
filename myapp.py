@@ -28,3 +28,4 @@ st.write("GT/GB: High Gene Expression/Low Gene Expression")
 st.write("MT/MB: Hypermethylation/Hypomethylation")
 st.write("CG/CD: Copy Number Gain/Copy Number Deletion")
 st.write("Mut: Mutation")
+
