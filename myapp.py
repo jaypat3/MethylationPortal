@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from math import log
 
+st.set_page_config(page_title="Home")
 st.title('Methylation Portal')
 
 st.write("A brief guide on using this website:")

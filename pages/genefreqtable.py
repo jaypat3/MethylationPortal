@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from math import log
 
-
-st.title('Frequency Table Across Genes')
+st.set_page_config(page_title="Multiple Gene Frequency")
+st.title('Frequency Table Across Multiple Genes')
 
 BLCA = './TCGADatasets/BLCA/GeneTableBLCAPVals.csv'
 BRCA = './TCGADatasets/BRCA/GeneTableBRCAPVals.csv'

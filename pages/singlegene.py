@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from math import log
 
+st.set_page_config(page_title="Single Gene Analysis")
 
-st.title('Single Gene')
+st.title('Single Gene Analysis')
 
 BLCAdata = './TCGADatasets/BLCA/GeneTableBLCAPVals.csv'
 BRCAdata = './TCGADatasets/BRCA/GeneTableBRCAPVals.csv'
@@ -222,10 +223,11 @@ if L:
     df.columns = ['Dataset','GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
     df = df.set_index('Dataset')
     df = df.T
+    df2 = df.copy()
     df['Categories'] = ['GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
     st.subheader("Section 2: Visualizing p values per dataset")
     st.write("Depending on the number of datasets this gene appears in, there may be many plots showing which categories a gene is significant in.\n We first provide a table showing a summary of what will be plotted")
-    st.write(df)
+    st.write(df2)
 
 for item in order:
     plt.figure()

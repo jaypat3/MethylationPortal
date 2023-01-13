@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from math import log
 
+st.set_page_config(page_title="Significant Genes by Category")
 
-st.title('Significant Genes across Category')
+st.title('Significant Genes by Category')
 
 BLCA = './TCGADatasets/BLCA/GeneTableBLCAPVals.csv'
 BRCA = './TCGADatasets/BRCA/GeneTableBRCAPVals.csv'
