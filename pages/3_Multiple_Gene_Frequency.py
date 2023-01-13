@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from math import log
 
-st.set_page_config(page_title="Significant Genes by Category")
-
-st.title('Significant Genes by Category')
+st.set_page_config(page_title="Multiple Gene Frequency")
+st.title('Frequency Table Across Multiple Genes')
 
 BLCA = './TCGADatasets/BLCA/GeneTableBLCAPVals.csv'
 BRCA = './TCGADatasets/BRCA/GeneTableBRCAPVals.csv'
@@ -41,7 +40,7 @@ all_data = [BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PA
 #BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC
 #all_datasets = [BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC]
 #OV REMOVED FOR NOW
-gene_data_array = []
+all_categories = ["GTMT","GTMB","GBMT","GBMB","GTCG","GTCD","GBCG","GBCD","GTMut","GBMut"]
 
 @st.cache
 def load_data(dataset):
@@ -103,38 +102,63 @@ def switch(data):
         st.write("INVALID INPUT")
         return
 
-def unique(list1):
- 
-    # insert the list to the set
-    list_set = set(list1)
-    # convert the set to the list
-    unique_list = (list(list_set))
-    return unique_list
+def get_count_binary(gene,data):
+    arr = []
+    data = data.loc[data['Gene'] == gene]
+    for category in all_categories:
+        temp = data[data.loc[:,category] <= 0.05]
+        if category == "GTMT":
+            temp = temp[temp["GTMTnSig"] >= 0.05]
+        if category == "GTMB":
+            temp = temp[temp["GTMBnSig"] >= 0.05]
+        if category == "GBMT":
+            temp = temp[temp["GBMTnSig"] >= 0.05]
+        if category == "GBMB":
+            temp = temp[temp["GBMBnSig"] >= 0.05]
+
+
+        if temp.empty:
+            arr.append(0)
+        else:
+            arr.append(1)
+    return arr
+    
 
 for i,data in enumerate(all_data):
     all_data[i] = load_data(data)
-    
 
 which_dataset = st.text_input("Enter Dataset: ")
-which_category = st.text_input("Enter Category: ")
-which_threshold = st.number_input("Enter threshold: ")
+type_of_input = st.selectbox("Enter type of input: ",("Space Separated","CSV"))
+if type_of_input == "Space Separated":
+    input = st.text_input("Enter list of genes (space separated)")
+    genes_list = input.split()
+elif type_of_input == "CSV":
+    input = st.text_input("Enter list of genes (CSV)")
+    genes_list = input.split(",")
 
-if which_dataset and which_category and which_threshold:
+if which_dataset and input:
     main_dataset = switch(which_dataset)
+    L = []
+    for gene in genes_list:
+        to_add = []
+        to_add.append(gene)
+        category_nums = get_count_binary(gene,main_dataset)
+        to_add.extend(category_nums)
+        L.append(pd.DataFrame(to_add).T)
+    
+    df = pd.concat(L,ignore_index=True)
+    x = ['Dataset','GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
+    df.columns = x
+    df = df.set_index('Dataset')
+    st.write(df)
+    st.write("Note: The above is a binary matrix; 1 for has significant probes, 0 for doesn't.")
+    st.write("The idea of the plot below is to get an idea of how many genes are represented in a category, not how many probes, as that may skew the plots since some genes may have many more probes than others.")
 
-    tempdf = main_dataset.loc[:,["Dataset","Gene","Location","Probe","MedianBvalTumor","MedianBvalNormal","Corr",which_category]]
-    tempdf = tempdf[tempdf[which_category] <= which_threshold]
-    st.write("The entire dataframe")
-    st.write(tempdf)
-    important_genes = tempdf["Gene"]
-    important_genes = unique(important_genes)
-    st.write("The significant genes")
-    st.write(important_genes)
-
-    check_gene = st.text_input("Check if gene is in this list: ")
-    if check_gene:
-        result = important_genes.count(check_gene)
-        if result > 0:
-            st.write("This gene is in the list!")
-        else:
-            st.write("This gene is NOT in the list!")
+    x.pop(0)
+    y = df.sum(axis=0)
+    plt.figure()
+    plt.title("Frequency Counts of Category in Gene List")
+    plt.bar(x,y)
+    plt.show()
+    st.pyplot(plt)
+    
