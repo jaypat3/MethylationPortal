@@ -12,6 +12,8 @@ st.subheader("Introduction:")
 st.write("Welcome! This website aims to provide analysis of TCGA (The Cancer Genome Atlas) Datasets with regards to associations between gene expression and 3 epigenetic markers of cancer: Methylation, Copy Number Variation, and Mutation.")
 st.write("We utilize tables which determine the significance of association between a probe's gene expression and its epigenetic markers, and we call probes with a p value of < 0.05 in a specific category to be 'significant'.")
 st.write("All data is provided in the data section of the website.")
+st.write("Note: All inputs are case sensitive!")
+
 
 st.header("A brief guide on using this website:")
 st.subheader("Single Gene Analysis:")
