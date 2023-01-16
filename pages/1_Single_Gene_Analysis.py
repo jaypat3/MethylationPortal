@@ -152,6 +152,7 @@ if text_input:
         probe_count_df = probe_count_df.set_index('Dataset')
     else:
         st.error("Invalid input; note that inputs are case sensitive! (Datasets are BLCA, BRCA, CESC,etc and genes are BRCA1,NXN,ERBB2, etc)")
+        st.stop()
     with tab1:
         if not probe_count_df.empty:
             st.subheader("Section 1: Visualizing significant Probes")
