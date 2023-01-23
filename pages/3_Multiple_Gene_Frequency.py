@@ -171,6 +171,7 @@ if which_dataset and input:
     plt.title("Frequency Counts of Category in Gene List")
     plt.bar(x,y)
     plt.ylabel("Counts")
+    plt.xlabel('Category')
     plt.show()
     st.pyplot(plt)
     

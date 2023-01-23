@@ -249,6 +249,7 @@ if text_input:
             plt.bar(labels,significant_probes_matrix_counts)
             plt.title('Significant Probes by Characteristic (unique)')
             plt.ylabel('Frequency')
+            plt.xlabel('Category')
             plt.show()
             st.pyplot(plt)
             st.write("This plot gives counts of how many probes are significant in a certain category. Again, note that a probe may show up as significant across multiple categories.")
