@@ -111,11 +111,15 @@ def unique(list1):
     unique_list = (list(list_set))
     return unique_list
 
+@st.experimental_memo
+def convert_df(df):
+   return df.to_csv(index=False).encode('utf-8')
+
 for i,data in enumerate(all_data):
     all_data[i] = load_data(data)
     
 
-which_dataset = st.text_input("Enter Dataset: ")
+which_dataset = st.selectbox("Enter Dataset: ",("BLCA","BRCA","CESC","COAD","ESCA","GBM","HNSC","KIRC","KIRP","LGG","LIHC","LUAD","LUSC","OV","PAAD","PCPG","PRAD","READ","SARC","SKCM","STAD","TGCT","THCA","THYM","UCEC"))
 # which_category = st.text_input("Enter Category: ")
 which_category = st.selectbox("Enter Category: ",("GTMT","GTMB","GBMT","GBMB","GTCG","GTCD","GBCG","GBCD","GTMut","GBMut"))
 which_threshold = st.number_input("Enter threshold: ")
@@ -125,7 +129,7 @@ if which_dataset and which_category and which_threshold:
 
     tempdf = main_dataset.loc[:,["Dataset","Gene","Location","Probe","MedianBvalTumor","MedianBvalNormal","Corr",which_category]]
     tempdf = tempdf[tempdf[which_category] <= which_threshold]
-    st.write("The entire dataframe")
+    st.write("The entire dataframe filtered by category and threshold")
     st.write(tempdf)
     important_genes = tempdf["Gene"]
     important_genes = unique(important_genes)
@@ -139,3 +143,10 @@ if which_dataset and which_category and which_threshold:
             st.write("This gene is in the list!")
         else:
             st.write("This gene is NOT in the list!")
+
+    important_genes = pd.DataFrame(important_genes)
+    important_genes.columns = ['Gene']
+    csv1 = convert_df(tempdf)
+    st.download_button("Press to download full table filtered by category and threshold",csv1,"significant_genes_by_category_dataframe.csv","text/csv")
+    csv2 = convert_df(important_genes)
+    st.download_button("Press to download the list of significant genes",csv2,"significant_genes_by_category_genelist.csv","text/csv")

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from math import log
 from math import ceil
+import io
 
 st.set_page_config(page_title="Single Gene Analysis")
 
@@ -41,7 +42,7 @@ GeneLink = './TCGADatasets/ProbeMapping/probeMap_hugo_gencode_good_hg19_V24lift3
 all_data = [BLCAdata,BRCAdata,CESCdata,COADdata,ESCAdata,GBMdata,HNSCdata,KIRCdata,KIRPdata,LGGdata,LIHCdata,LUADdata,LUSCdata,OVdata,PAADdata,PCPGdata,PRADdata,READdata,SARCdata,SKCMdata,STADdata,TGCTdata,THCAdata,THYMdata,UCECdata]
 #BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC
 #all_datasets = [BLCA,BRCA,CESC,COAD,ESCA,GBM,HNSC,KIRC,KIRP,LGG,LIHC,LUAD,LUSC,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC]
-#OV REMOVED FOR NOW
+all_data_names = ["BLCA","BRCA","CESC","COAD","ESCA","GBM","HNSC","KIRC","KIRP","LGG","LIHC","LUAD","LUSC","OV","PAAD","PCPG","PRAD","READ","SARC","SKCM","STAD","TGCT","THCA","THYM","UCEC"]
 gene_data_array = []
 
 @st.cache
@@ -115,6 +116,10 @@ def combine_p_vals(dataset,col):
 def negln(x):
     return -log(x)
 
+@st.experimental_memo
+def convert_df(df):
+   return df.to_csv(index=False).encode('utf-8')
+
 #LOADING DATA
 for i,data in enumerate(all_data):
     all_data[i] = load_data(data)
@@ -156,8 +161,10 @@ if text_input:
     with tab1:
         if not probe_count_df.empty:
             st.subheader("Section 1: Visualizing significant Probes")
+            plt.figure()
             probe_count_df.plot(kind='bar',stacked=True,title='Significant Probes by Dataset')
             plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+            plt.ylabel('Frequency')
             plt.show()
             st.pyplot(plt)
             st.write("Note: there is (almost always) overlap between the classification groups GTMT,GTMB,etc.")
@@ -165,8 +172,58 @@ if text_input:
             st.write("Not just that, but the same probe may even show up as significant across multiple tumor types.")
             st.write("\n\n")
 
+            
+            x = probe_count_df.index
+            plt.figure()
+            plt.suptitle("Probe Frequencies across Categorical Pairs")
+            plt.subplot(2,2,1)
+            y1 = probe_count_df.loc[:,"GTMT"]
+            y2 = probe_count_df.loc[:,"GTMB"]
+            plt.bar(x,y1,color="r")
+            plt.bar(x,y2,bottom=y1,color="b")
+            plt.legend(["GTMT","GTMB"],bbox_to_anchor=(1.05, 1.0),loc = 'upper left')
+            plt.xlabel('Dataset')
+            plt.ylabel('Frequency')
+
+            plt.subplot(2,2,2)
+            y1 = probe_count_df.loc[:,"GBMT"]
+            y2 = probe_count_df.loc[:,"GBMB"]
+            plt.bar(x,y1,color="r")
+            plt.bar(x,y2,bottom=y1,color="b")
+            plt.legend(["GBMT","GBMB"],bbox_to_anchor=(1.05, 1.0),loc='upper left')
+            plt.xlabel('Dataset')
+            plt.ylabel('Frequency')
+
+            plt.subplot(2,2,3)
+            y1 = probe_count_df.loc[:,"GTCG"]
+            y2 = probe_count_df.loc[:,"GTCD"]
+            plt.bar(x,y1,color="r")
+            plt.bar(x,y2,bottom=y1,color="b")
+            plt.legend(["GTCG","GTCD"],bbox_to_anchor=(1.05, 1.0),loc='upper left')
+            plt.xlabel('Dataset')
+            plt.ylabel('Frequency')
+
+            plt.subplot(2,2,4)
+            y1 = probe_count_df.loc[:,"GBCG"]
+            y2 = probe_count_df.loc[:,"GBCD"]
+            plt.bar(x,y1,color="r")
+            plt.bar(x,y2,bottom=y1,color="b")
+            plt.legend(["GBCG","GBCD"],bbox_to_anchor=(1.05, 1.0),loc='upper left')
+            plt.xlabel('Dataset')
+            plt.ylabel('Frequency')
+
+            plt.subplots_adjust(wspace=1,hspace=1)
+            plt.show()
+            st.pyplot(plt)
+
+            csv = convert_df(probe_count_df)
+            st.download_button("Press to download significant probe counts table",csv,"significant_probes_dataset.csv","text/csv")
+
+
     important_probes_gene = []
-    significant_probes_matrix = []
+    significant_probes_matrix_counts = []
+    important_probes_gene_methylation = []
+    significant_probes_df = pd.DataFrame()
     labels = ['GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
     for label in labels:
         all_probes = []
@@ -175,21 +232,31 @@ if text_input:
             to_add = get_significant_probes(data,label)
             if to_add:
                 all_probes.extend(to_add)
-        
+            if to_add and (label == 'GTMT' or label == 'GTMB' or label == 'GBMT' or label == 'GBMB'):
+                important_probes_gene_methylation.extend(to_add)
+
         if all_probes:
             important_probes_gene = unique(all_probes)
-            significant_probes_matrix.append(len(unique(all_probes)))
+            significant_probes_df = pd.concat([significant_probes_df,pd.Series(important_probes_gene,name=label)],axis=1)
+            significant_probes_matrix_counts.append(len(unique(all_probes)))
         else:
-            significant_probes_matrix.append(0)
+            significant_probes_matrix_counts.append(0)
 
+    important_probes_gene_methylation = unique(important_probes_gene_methylation)
     with tab1:
         if not probe_count_df.empty:
             plt.figure()
-            plt.bar(labels,significant_probes_matrix)
+            plt.bar(labels,significant_probes_matrix_counts)
             plt.title('Significant Probes by Characteristic (unique)')
+            plt.ylabel('Frequency')
             plt.show()
             st.pyplot(plt)
             st.write("This plot gives counts of how many probes are significant in a certain category. Again, note that a probe may show up as significant across multiple categories.")
+        
+        csv = convert_df(significant_probes_df)
+        st.download_button("Press to download unique probes category table",csv,"significant_probes_category.csv","text/csv")
+
+
 
 
     p_value_df = pd.DataFrame()
@@ -215,18 +282,51 @@ if text_input:
             p_value_df = p_value_df.set_index('Dataset')
             p_value_df = p_value_df.T
             p_value_df_copy = p_value_df.copy()
-            p_value_df['Categories'] = ['GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
+            categories = ['GTMT','GTMB','GBMT','GBMB','GTCG','GTCD','GBCG','GBCD','GTMut','GBMut']
+            p_value_df['Categories'] = categories
             st.subheader("Section 2: Visualizing p values per dataset")
-            st.write("Depending on the number of datasets this gene appears in, there may be many plots showing which categories a gene is significant in.\n We first provide a table showing a summary of what will be plotted")
-            st.write(p_value_df_copy)
+
+        plt.figure(figsize=(25,25))
+        plt.suptitle("P Values per dataset",y=0.95,size=32)
+        x = categories
+        for index,item in enumerate(all_data_names,1):
+            plt.subplot(5,5,index,)
+            plt.title(item)
+            default_x_ticks = range(len(x))
+            plt.xticks(default_x_ticks, x)
+            plt.xlabel('Category')
+            plt.ylabel('p value (-ln)')
+            if item in order:
+                y = p_value_df.loc[:,item]
+                plt.scatter(x,y)
+                plt.axhline(y = negln(0.05),color='r',linestyle='-')
         
-        for item in order:
-            plt.figure()
-            p_value_df.plot.scatter('Categories',item)
-            plt.axhline(y = negln(0.05), color = 'r', linestyle = '-')
-            plt.title(item + ' overall p value (negative log)')
-            plt.show()
-            st.pyplot(plt)
+        
+        plt.subplots_adjust(wspace=0.25,hspace=0.25)
+        plt.show()
+        st.pyplot(plt) 
+
+        csv = convert_df(p_value_df)
+        st.download_button("Press to download p value table",csv,"p_value_table.csv","text/csv")
+
+        fn = 'p_values.png'
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+ 
+        btn = st.download_button(
+            label="Download image",
+            data=img,
+            file_name=fn,
+            mime="image/png"
+        )
+
+        # for item in order:
+            # plt.figure()
+            # p_value_df.plot.scatter('Categories',item)
+            # plt.axhline(y = negln(0.05), color = 'r', linestyle = '-')
+            # plt.title(item + ' overall p value (negative log)')
+            # plt.show()
+            # st.pyplot(plt)
 
     with tab3:
         st.subheader("Section 3: Visualizing the location of probes inside a gene")
@@ -237,16 +337,18 @@ if text_input:
         probe_info.sort_values('chromStart',ascending=True,inplace=True)
         x = probe_info.loc[:,"#id"]
         y = probe_info.loc[:,"chromStart"]
-        intersections = list(set(x).intersection(important_probes_gene))
+        intersections = list(set(x).intersection(important_probes_gene_methylation))
         diff_color_int = np.where(x.isin(intersections),'r','b')
         plt.figure()
-        plt.scatter(x,y,c=diff_color_int)
-        plt.axhline(y = gene_start, color = 'r', linestyle = '-')
-        plt.axhline(y = gene_end, color = 'r', linestyle = '-')
+        plt.scatter(y,x,c=diff_color_int)
+        plt.axvline(x = gene_start, color = 'r', linestyle = '-')
+        plt.axvline(x = gene_end, color = 'r', linestyle = '-')
         plt.suptitle(text_input + ' Probe Location map')
-        plt.title('Red probes are significant in some dataset')
-        if len(x) > 10:
-            plt.xticks([])
+        plt.xlabel('Location (BP)')
+        plt.ylabel('Probe')
+        plt.title('Red probes are significant (methylation-wise) in a dataset')
+        if len(y) > 10:
+            plt.yticks([])
         plt.show()
         st.pyplot(plt)
 

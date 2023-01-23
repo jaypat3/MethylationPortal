@@ -123,18 +123,29 @@ def get_count_binary(gene,data):
             arr.append(1)
     return arr
     
+@st.experimental_memo
+def convert_df(df):
+   return df.to_csv(index=False).encode('utf-8')
+
 
 for i,data in enumerate(all_data):
     all_data[i] = load_data(data)
 
-which_dataset = st.text_input("Enter Dataset: ")
-type_of_input = st.selectbox("Enter type of input: ",("Space Separated","CSV"))
+which_dataset = st.selectbox("Enter Dataset: ",("BLCA","BRCA","CESC","COAD","ESCA","GBM","HNSC","KIRC","KIRP","LGG","LIHC","LUAD","LUSC","OV","PAAD","PCPG","PRAD","READ","SARC","SKCM","STAD","TGCT","THCA","THYM","UCEC"))
+type_of_input = st.selectbox("Enter type of input: ",("Space Separated","CSV","CSV File"))
 if type_of_input == "Space Separated":
     input = st.text_input("Enter list of genes (space separated)")
     genes_list = input.split()
 elif type_of_input == "CSV":
     input = st.text_input("Enter list of genes (CSV)")
     genes_list = input.split(",")
+elif type_of_input == "CSV File":
+    datafile_link = st.file_uploader("Choose a file")
+    input = None
+    if datafile_link is not None:
+        datafile = load_data(datafile_link)
+        genes_list = datafile.iloc[:,0] 
+        input = "success"       
 
 if which_dataset and input:
     main_dataset = switch(which_dataset)
@@ -159,6 +170,9 @@ if which_dataset and input:
     plt.figure()
     plt.title("Frequency Counts of Category in Gene List")
     plt.bar(x,y)
+    plt.ylabel("Counts")
     plt.show()
     st.pyplot(plt)
     
+    csv = convert_df(df)
+    st.download_button("Press to download table",csv,"multiple_gene_freq_table.csv","text/csv")
