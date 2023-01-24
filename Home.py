@@ -15,3 +15,4 @@ st.write("A more extensive overview of what the website does and aims to accompl
 st.write("Also, guides on using the website are posted in their appropriate tab as well.")
 st.write("Note: All inputs are case sensitive!")
 
+st.write("If you're not sure what genes to put in, here's some: ERBB2, BRCA1, NXN, SGK1, EN1, PTPRN2")
