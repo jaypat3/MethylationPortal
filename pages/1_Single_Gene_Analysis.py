@@ -165,6 +165,7 @@ if text_input:
             probe_count_df.plot(kind='bar',stacked=True,title='Significant Probes by Dataset')
             plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
             plt.ylabel('Frequency')
+            plt.xticks(rotation=90)
             plt.show()
             st.pyplot(plt)
             st.write("Note: there is (almost always) overlap between the classification groups GTMT,GTMB,etc.")
@@ -184,6 +185,8 @@ if text_input:
             plt.legend(["GTMT","GTMB"],bbox_to_anchor=(1.05, 1.0),loc = 'upper left')
             plt.xlabel('Dataset')
             plt.ylabel('Frequency')
+            plt.xticks(rotation=90)
+
 
             plt.subplot(2,2,2)
             y1 = probe_count_df.loc[:,"GBMT"]
@@ -193,6 +196,7 @@ if text_input:
             plt.legend(["GBMT","GBMB"],bbox_to_anchor=(1.05, 1.0),loc='upper left')
             plt.xlabel('Dataset')
             plt.ylabel('Frequency')
+            plt.xticks(rotation=90)
 
             plt.subplot(2,2,3)
             y1 = probe_count_df.loc[:,"GTCG"]
@@ -202,6 +206,7 @@ if text_input:
             plt.legend(["GTCG","GTCD"],bbox_to_anchor=(1.05, 1.0),loc='upper left')
             plt.xlabel('Dataset')
             plt.ylabel('Frequency')
+            plt.xticks(rotation=90)
 
             plt.subplot(2,2,4)
             y1 = probe_count_df.loc[:,"GBCG"]
@@ -211,6 +216,7 @@ if text_input:
             plt.legend(["GBCG","GBCD"],bbox_to_anchor=(1.05, 1.0),loc='upper left')
             plt.xlabel('Dataset')
             plt.ylabel('Frequency')
+            plt.xticks(rotation=90)
 
             plt.subplots_adjust(wspace=1,hspace=1)
             plt.show()
@@ -250,6 +256,7 @@ if text_input:
             plt.title('Significant Probes by Characteristic (unique)')
             plt.ylabel('Frequency')
             plt.xlabel('Category')
+            plt.xticks(rotation=90)
             plt.show()
             st.pyplot(plt)
             st.write("This plot gives counts of how many probes are significant in a certain category. Again, note that a probe may show up as significant across multiple categories.")
@@ -294,7 +301,7 @@ if text_input:
             plt.subplot(5,5,index,)
             plt.title(item)
             default_x_ticks = range(len(x))
-            plt.xticks(default_x_ticks, x)
+            plt.xticks(default_x_ticks, x, rotation=90)
             plt.xlabel('Category')
             plt.ylabel('p value (-ln)')
             if item in order:
@@ -350,6 +357,7 @@ if text_input:
         plt.title('Red probes are significant (methylation-wise) in a dataset')
         if len(y) > 10:
             plt.yticks([])
+        plt.xticks(rotation=90)
         plt.show()
         st.pyplot(plt)
 

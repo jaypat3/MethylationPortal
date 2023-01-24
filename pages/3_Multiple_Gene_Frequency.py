@@ -172,6 +172,7 @@ if which_dataset and input:
     plt.bar(x,y)
     plt.ylabel("Counts")
     plt.xlabel('Category')
+    plt.xticks(rotation=90)
     plt.show()
     st.pyplot(plt)
     
