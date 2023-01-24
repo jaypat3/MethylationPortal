@@ -294,7 +294,7 @@ if text_input:
             p_value_df['Categories'] = categories
             st.subheader("Section 2: Visualizing p values per dataset")
 
-        plt.figure(figsize=(25,25))
+        plt.figure(figsize=(30,30))
         plt.suptitle("P Values per dataset",y=0.95,size=32)
         x = categories
         for index,item in enumerate(all_data_names,1):
@@ -302,7 +302,6 @@ if text_input:
             plt.title(item)
             default_x_ticks = range(len(x))
             plt.xticks(default_x_ticks, x, rotation=90)
-            plt.xlabel('Category')
             plt.ylabel('p value (-ln)')
             if item in order:
                 y = p_value_df.loc[:,item]
